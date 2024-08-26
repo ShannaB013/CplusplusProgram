@@ -1,0 +1,115 @@
+/*
+Shanna Boyte
+CS 210
+Project 3: Looking up item frequency, printing frequency, and printing histogram of grocery items
+*/
+
+
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <string>
+
+// Function to display menu and get user input
+int groceryMenu() {
+    int menu;
+    std::cout << "\nMenu Options:" << std::endl;
+    std::cout << "1. Look up item frequency" << std::endl;
+    std::cout << "2. Print item frequency" << std::endl;
+    std::cout << "3. Print histogram" << std::endl;
+    std::cout << "4. Exit Program" << std::endl;
+    std::cout << "Enter your choice: ";
+    std::cin >> menu;
+    return menu;
+}
+
+// Function to look up frequency of a specific item
+void lookupItemFrequency(const std::map<std::string, int>& itemFrequency) {
+    std::string item;
+    std::cout << "Enter item name: ";
+    std::cin >> item;
+
+    auto iter = itemFrequency.find(item);
+    if (iter != itemFrequency.end()) {
+        std::cout << "Frequency of " << item << ": " << iter->second << std::endl;
+    }
+    else {
+        std::cout << "Item not found" << std::endl;
+    }
+}
+
+// Function to print item frequencies
+void printItemFrequency(const std::map<std::string, int>& itemFrequency) {
+    std::cout << "Item Frequencies:" << std::endl;
+    for (const auto& pair : itemFrequency) {
+        std::cout << pair.first << ": " << pair.second << std::endl;
+    }
+}
+
+// Function to print item frequency histogram
+void printItemFrequencyHistogram(const std::map<std::string, int>& itemFrequency) {
+    std::cout << "Item Frequency Histogram: " << std::endl;
+    for (const auto& pair : itemFrequency) {
+        std::cout << pair.first << " ";
+        for (int i = 0; i < pair.second; ++i) {
+            std::cout << "*";
+        }
+        std::cout << std::endl;
+    }
+}
+
+int main() {  //Prompts error message if file isn't found
+    std::ifstream inputFile("CS210_Project_Three_Input_File.txt");
+    if (!inputFile.is_open()) {
+        std::cout << "Error opening input file!" << std::endl;
+        return 1;
+    }
+
+    std::map<std::string, int> itemFrequency;
+    std::string item;
+
+    while (inputFile >> item) {
+        itemFrequency[item]++;
+    }
+    inputFile.close();
+
+    int menu;
+    do {
+        menu = groceryMenu();
+
+        switch (menu) {
+        case 1:
+            lookupItemFrequency(itemFrequency);
+            break;
+        case 2:
+            printItemFrequency(itemFrequency);
+            break;
+        case 3:
+            printItemFrequencyHistogram(itemFrequency);
+            break;
+        case 4:
+            std::cout << "Goodbye!" << std::endl;
+            break;
+        default:
+            std::cout << "Invalid option! Please try again." << std::endl;
+        }
+
+    } while (menu != 4);
+
+      std::ofstream outputFile("frequency.dat");
+      if (!outputFile.is_open()) {
+          for (const auto& pair : itemFrequency) {
+              outputFile << pair.first << " " << pair.second << std::endl;
+          
+          }
+
+          outputFile.close();
+      }
+      else{
+          std::cout << "Error opening input file!" << std::endl;
+
+    }
+
+    return 0;
+
+}
